@@ -5,14 +5,14 @@ Derives market sentiment from reddit posts and comments using VADER sentiment mo
 
 ## Tools
 
-Python 3.9.2
-Django
-Chart.js
-SQLite
-[Vader Sentiment](https://github.com/cjhutto/vaderSentiment)
-[get_all_tickers](https://github.com/shilewenuw/get_all_tickers)
-[praw](https://praw.readthedocs.io/en/latest/#)
-[psaw](https://psaw.readthedocs.io/en/latest/)
+Python 3.9.2  
+Django  
+Chart.js  
+SQLite  
+[Vader Sentiment](https://github.com/cjhutto/vaderSentiment)  
+[get_all_tickers](https://github.com/shilewenuw/get_all_tickers)  
+[praw](https://praw.readthedocs.io/en/latest/#)  
+[psaw](https://psaw.readthedocs.io/en/latest/)  
 
 ## How it works
 
