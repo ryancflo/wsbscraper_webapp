@@ -2,10 +2,14 @@ from django.db import models
 
 # Create your models here.
 class Ticker(models.Model):
+   BULLISH = 'Bullish'
+   BEARISH = 'Bearish'
+   NEUTRAL = 'Neutral'
+   
    SENTIMENT = (
-      ('Bullish', 'Bullish'),
-      ('Bearish', 'Bearish'),
-      ('Neutral', 'Neutral'),
+      (BULLISH, 'Bullish'),
+      (BEARISH, 'Bearish'),
+      (NEUTRAL, 'Neutral'),
       )
 
    ticker = models.CharField(max_length=200)

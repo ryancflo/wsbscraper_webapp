@@ -3,12 +3,14 @@ from django.urls import reverse
 from django.http import HttpResponse
 from django.views import View
 from django.db.models import Count
+from django.db.models import Q
 
 from main.models import Ticker
 import praw
 from psaw import PushshiftAPI
 import datetime as dt
 from datetime import datetime, timedelta
+import pytz
 import re
 import sys
 sys.path.insert(0, 'vaderSentiment-master/vaderSentiment') 
@@ -53,11 +55,19 @@ def index(request):
         end_date = datetime.today() - timedelta(days = 3, microseconds=datetime.today().microsecond)
     else:
         print("Other")
-    print(str(end_date))
-    ticker_data = Ticker.objects.filter(date_posted = str(end_date))
-    # .values('ticker').annotate(num_mentions=Count('ticker')).order_by('-num_mentions')[:10]
+        end_date = datetime.today() - timedelta(days = 5, microseconds=datetime.today().microsecond)
+
+    end_date = pytz.utc.localize(end_date)
+    start_date = pytz.utc.localize(datetime.today() - timedelta(days = 0, microseconds=datetime.today().microsecond))
+    print(start_date, end_date)
+ 
+
+    ticker_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(num_mentions=Count('ticker')).order_by('-num_mentions')[:10]
+    bullish_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(bullish_sentiment=Count('pk', filter=Q(sentiment=Ticker.BULLISH))).order_by(ticker_data.num_mentions)[:10]
+    bearish_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(bearish_sentiment=Count('pk', filter=Q(sentiment=Ticker.BEARISH))).order_by(ticker_data.num_mentions)[:10]
+    print(bullish_data)
     print(ticker_data)
-    return render(request, 'main/24hour.html', {'data' : ticker_data})
+    return render(request, 'main/24hour.html', {'data' : ticker_data, 'bullish_data' : bullish_data, 'bearish_data' : bearish_data})
     
 #Without Dollar Sign
 def extract_ticker(post):
