@@ -7,12 +7,16 @@ Derives market sentiment from reddit posts and comments using VADER sentiment mo
 
 Python 3.9.2  
 Django  
+JavaScript  
+HTML  
+BootStrap  
 Chart.js  
 SQLite  
 [Vader Sentiment](https://github.com/cjhutto/vaderSentiment)  
 [get_all_tickers](https://github.com/shilewenuw/get_all_tickers)  
 [praw](https://praw.readthedocs.io/en/latest/#)  
 [psaw](https://psaw.readthedocs.io/en/latest/)  
+[tradingview-lightweightcharts] (https://www.tradingview.com/lightweight-charts/)  
 
 ## How it works
 
@@ -20,5 +24,7 @@ SQLite
 2. Extracts ticker symbols from reddit text submissions
 3. VADER analyzes text submsision and assigns a sentiment value to the ticker [Bullish, Bearish, Neutral]
 4. Data is inserted into sqlite database and outputted onto the dashboard
+
+## Features
 
 ## Roadmap
