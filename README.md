@@ -20,3 +20,5 @@ SQLite
 2. Extracts ticker symbols from reddit text submissions
 3. VADER analyzes text submsision and assigns a sentiment value to the ticker [Bullish, Bearish, Neutral]
 4. Data is inserted into sqlite database and outputted onto the dashboard
+
+## Roadmap

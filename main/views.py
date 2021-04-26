@@ -17,6 +17,8 @@ sys.path.insert(0, 'vaderSentiment-master/vaderSentiment')
 from vaderSentiment import SentimentIntensityAnalyzer
 sys.path.insert(1, 'get_all_tickers-master/')
 from get_all_tickers import get_tickers as gt
+from alpha_vantage.timeseries import TimeSeries
+from json import dumps
 
 list_of_tickers = gt.get_tickers_filtered(mktcap_min = 1000)
 lookup = set(list_of_tickers)
@@ -62,13 +64,28 @@ def index(request):
     print(start_date, end_date)
  
 
-    ticker_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(num_mentions=Count('ticker')).order_by('-num_mentions')[:10]
-    bullish_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(bullish_sentiment=Count('pk', filter=Q(sentiment=Ticker.BULLISH))).order_by(ticker_data.num_mentions)[:10]
-    bearish_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(bearish_sentiment=Count('pk', filter=Q(sentiment=Ticker.BEARISH))).order_by(ticker_data.num_mentions)[:10]
-    print(bullish_data)
-    print(ticker_data)
-    return render(request, 'main/24hour.html', {'data' : ticker_data, 'bullish_data' : bullish_data, 'bearish_data' : bearish_data})
+    ticker_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(num_mentions=Count('ticker')).order_by('-num_mentions')
+    bullish_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(bullish_sentiment=Count('ticker', filter=Q(sentiment=Ticker.BULLISH))).annotate(num_mentions=Count('ticker')).order_by('-num_mentions')
+    bearish_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(bearish_sentiment=Count('ticker', filter=Q(sentiment=Ticker.BEARISH))).annotate(num_mentions=Count('ticker')).order_by('-num_mentions')
+    neutral_data = Ticker.objects.filter(date_posted__range = (str(end_date), str(start_date))).values('ticker').annotate(neutral_sentiment=Count('ticker', filter=Q(sentiment=Ticker.NEUTRAL))).annotate(num_mentions=Count('ticker')).order_by('-num_mentions')
     
+    # print(bullish_data)
+    # print(ticker_data)
+    return render(request, 'main/24hour.html', {'data' : ticker_data, 'bullish_data' : bullish_data, 'bearish_data' : bearish_data, 'neutral_data' : neutral_data})
+
+def timeseries_view(request, ticker_symbol):
+    tickerprice_data = fetch_stock(ticker_symbol)
+    print(type(tickerprice_data))
+    dataJSON = dumps(tickerprice_data)
+    return render(request, 'main/timeseries.html', {"tickerprice_data" : dataJSON})
+
+def fetch_stock(ticker):
+    API_key = 'D1AF4TI0LRFJDCNN'
+    ts = TimeSeries(key='YOUR_API_KEY')
+    data, meta_data = ts.get_daily_adjusted(symbol=ticker,  outputsize='compact')
+    return data
+
+
 #Without Dollar Sign
 def extract_ticker(post):
    reg_tickers = re.findall(r'[$][A-Z][\S]*', post)

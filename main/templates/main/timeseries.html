@@ -1,0 +1,13 @@
+{% extends 'main/base.html' %}
+{% block title %} Index {% endblock %}
+{% block content %}
+    {% load static %}
+
+    <script type="text/javascript">
+        tickerprice_data = {{ tickerprice_data|safe }}; 
+    </script>
+
+    <script type="text/javascript" src="{% static 'wsb_scraper/js/main.js' %}"></script>
+
+{% endblock %}
+
